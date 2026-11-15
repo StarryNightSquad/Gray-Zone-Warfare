@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GZW 0.5 物品产出查询 · V0.10.0</title>
+<title>GZW 0.5 物品产出查询 · V0.10.1</title>
 <style>
 :root{--bg:#fbfbfa;--fg:#1f2328;--dim:#6b7280;--line:#e5e7eb;--acc:#b45309;--card:#fff;--hi:#fef3c7}
 *{box-sizing:border-box}
@@ -107,7 +107,7 @@ kbd{background:#eee;border-radius:4px;padding:1px 5px;font-size:11px;font-family
     </div>
   </div>
 </div>
-<h1>GZW 0.5 · 物品产出查询<span class="ver">V0.10.0</span></h1>
+<h1>GZW 0.5 · 物品产出查询<span class="ver">V0.10.1</span></h1>
 <div class="sub">数据：0.5.0 资产（manifest 4970906435234985650）· 109 张容器表 + 114 张露天表 · <span id="cnt"></span></div>
 <div class="sub" style="margin-top:-10px">范围：<b>世界战利品</b>（容器 + 露天刷点）+ <b>7 个商人货架</b> + <b>敌人装备</b>。另标「<b>任务需求</b>」——表示某任务<b>需要</b>这把钥匙，但任务本身不提供。整枪配套件标「<b>整枪·</b>」——表示这件配件配在某套武器预设里，可以随整枪一起拿到；<b>只标「整枪」没有其他渠道的，才是买不到也捡不到</b>。不含藏身处产出。<br>
 商人等级：游戏内 1–4 级（UI 存在 1–5 级过滤器，5 级未启用）；<b>每件商品的等级要求不在客户端资产里</b>，只有整商人的解锁任务链可读 —— 见「商人 → 库存」页。<br>
@@ -143,7 +143,7 @@ A3 据点的外围仍按 A2 配 —— 因为六个帮派的掉落表<b>最高�
 </div>
 
 <div class="foot">
-  <div>本工具由「繁星攻略组」提供 · <b>V0.10.0</b></div>
+  <div>本工具由「繁星攻略组」提供 · <b>V0.10.1</b></div>
   <div>反馈与纠错：<a href="https://www.xiaoheihe.cn/app/user/profile/80727291" target="_blank" rel="noopener">小黑盒 · 繁星攻略组</a></div>
   <div class="tip">工具版本见上；数据基线为 0.5.0 客户端资产解析（与工具版本号无关），与游戏内实际表现可能存在差异；以实测为准。</div>
 </div>
@@ -369,8 +369,9 @@ function presetTable(p){
       <td class="num">合计</td><td>${p.parts.length} 件${lack ? `（${lack} 件缺数值）` : ''}</td>
       <td class="num">${p.tw.toFixed(2)}</td><td class="num">${p.tp}</td><td></td></tr>`;
   return `<table class="ptab"><tr><th style="width:78px">槽位</th><th>配件</th>` +
-    `<th style="width:56px;text-align:right">kg</th><th style="width:64px;text-align:right">$</th>` +
-    `<th style="width:30%">资产名</th></tr>${rows}${sum}</table>`;
+    `<th style="width:56px;text-align:right">kg</th>` +
+    `<th style="width:76px;text-align:right" title="物品基础价值：在商人处购买按此价；出售给对口商人可得 100%，其他商人约 75%">基础价$</th>` +
+    `<th style="width:28%">资产名</th></tr>${rows}${sum}</table>`;
 }
 
 function renderPreset(kw){
@@ -410,7 +411,8 @@ function renderPreset(kw){
     if((p.l||[]).some(x => x.toLowerCase().includes(k))) return true;
     return false;
   });
-  meta.textContent = '命中 ' + hits.length + ' 个预设 · 一套预设＝一套固定装配；来源可能是箱子、商人、敌人尸体或露天整枪';
+  meta.textContent = '命中 ' + hits.length + ' 个预设 · 一套预设＝一套固定装配；来源可能是箱子、商人、敌人尸体或露天整枪'
+    + ' · 价格是物品的「基础价值」：在商人处购买按这个价，出售给对口商人可得 100%，卖给其他商人约 75%';
   if(!hits.length){
     out.innerHTML = '<div class="empty">没有匹配的预设。试试枪型（AK-12 / M16A1 / MP5）、颜色（沙土色 / 橄榄）或配件名</div>';
     return;
@@ -443,7 +445,7 @@ function renderPreset(kw){
               p.code && p.code !== p.dn ? `　预设代码名「${esc(p.code)}」` : ''}</div>` : '';
         // 整套合计：重量是玩家真正在意的量（背着走多久），价格看值不值
         const statLine = p.ns
-          ? `<div class="statline">整套 <b>${p.tw.toFixed(2)} kg</b> · <b>$${p.tp}</b>${
+          ? `<div class="statline">整套 <b>${p.tw.toFixed(2)} kg</b> · <b title="物品基础价值合计；出售给商人通常只能拿到 75%">$${p.tp}</b>${
               p.ns < p.parts.length ? `<span class="dim">　（${p.parts.length - p.ns} 件缺数值）</span>` : ''}</div>` : '';
         return `<div class="row" style="margin-bottom:6px">
           <div><span class="name">${esc(p.dn)}</span>
