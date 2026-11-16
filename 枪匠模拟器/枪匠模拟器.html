@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>枪匠模拟器 · 实验版 V0.1.1</title>
+<title>枪匠模拟器 · 实验版 V0.2.0</title>
 <style>
 :root{--bg:#fbfbfa;--fg:#1f2328;--dim:#6b7280;--line:#e5e7eb;--card:#fff;--acc:#b45309}
 *{box-sizing:border-box}
@@ -132,7 +132,7 @@ button:hover{background:#fef7ec;border-color:#fcd34d}
       </div>
     </div>
   </div>
-  <h1>枪匠模拟器<span class="ver">实验版 V0.1.1</span></h1>
+  <h1>枪匠模拟器<span class="ver">实验版 V0.2.0</span></h1>
   <div class="sub">
     槽位不是写死的：<b>枪身给出的根槽 + 已装配件开出来的新槽</b>，实时长出来。
     某个槽位的候选件 = 全库所有「占用该接口」的配件（不再限于官方预设配过的组合）。
@@ -951,7 +951,7 @@ $('#btnImport').addEventListener('click', () => {
 // 失败再退回 raw（无限制，但 CDN 会缓存几分钟 —— 刚发版就点会读到上一版）。
 const UPD_API = 'https://api.github.com/repos/StarryNightSquad/Gray-Zone-Warfare/contents/version.json';
 const UPD_RAW = 'https://raw.githubusercontent.com/StarryNightSquad/Gray-Zone-Warfare/main/version.json';
-const MY_VER = 'V0.1.1';
+const MY_VER = 'V0.2.0';
 
 async function fetchRemoteVersion(){
   try {
@@ -996,7 +996,8 @@ function cmpVer(a, b){
       }
     } catch (e) {
       msg.className = 'updmsg err';
-      msg.textContent = '检查失败（没联网，或仓库暂时访问不了）';
+      msg.textContent = '检查失败（没联网，或仓库暂时访问不了）'
+                      + ' —— 请检查是否能正常访问 GitHub';
     } finally {
       btn.disabled = false;
       btn.textContent = '检查更新';
@@ -1007,7 +1008,7 @@ function cmpVer(a, b){
 pickGun(DB.guns[0].b);
 </script>
   <div class="foot">
-    <b>实验版 V0.1.1</b> · 配件数据 2026-11-16 · 单文件离线可用，无需联网<br>
+    <b>实验版 V0.2.0</b> · 配件数据 2026-11-16 · 单文件离线可用，无需联网<br>
     这是测试版：<b>必需件判定</b>只对已实测的条目负责（枪托 / 导气箍 / 缓冲管 / 后握把 / 套筒 / 护木多数族），
     <b>互斥与同组</b>按 socket 关系推导，<b>修正值</b>按线性相加显示（游戏内是否乘算未验证）。<br>
     已知问题：瞄具的「死接口」（`Rail.Mount.Sight*` / `Rail.Sight` 由瞄具座开出时）会显示为不可用；
