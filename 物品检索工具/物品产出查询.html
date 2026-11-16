@@ -992,8 +992,22 @@ draw();
 // 页面本身是纯离线单文件，只有点这个按钮时才联网一次；失败就当没网，不打扰正常使用。
 // 版本号由构建时注入（V0.17.0），与页面其它地方的 VERSION 同源。
 // `version.json` 放在仓库**根目录**，两个工具共用（各自只写自己那一项）。
-const UPD_URL = 'https://raw.githubusercontent.com/StarryNightSquad/Gray-Zone-Warfare/main/version.json';
+// 两个源：先 GitHub API（不缓存，能立刻读到刚推送的版本；匿名限流 60 次/小时/IP），
+// 失败再退回 raw（无限制，但 CDN 会缓存几分钟 —— 刚发版就点会读到上一版）。
+const UPD_API = 'https://api.github.com/repos/StarryNightSquad/Gray-Zone-Warfare/contents/version.json';
+const UPD_RAW = 'https://raw.githubusercontent.com/StarryNightSquad/Gray-Zone-Warfare/main/version.json';
 const MY_VER = 'V0.17.0';
+
+async function fetchRemoteVersion(){
+  try {
+    const r = await fetch(UPD_API + '?t=' + Date.now(),
+      { headers: { Accept: 'application/vnd.github.raw' }, cache: 'no-store' });
+    if(r.ok) return await r.json();
+  } catch (e) { /* 落到 raw */ }
+  const r2 = await fetch(UPD_RAW + '?t=' + Date.now(), { cache: 'no-store' });
+  if(!r2.ok) throw new Error('HTTP ' + r2.status);
+  return await r2.json();
+}
 
 function cmpVer(a, b){
   const pa = String(a).replace(/^v/i, '').split('.').map(x => parseInt(x, 10) || 0);
@@ -1015,11 +1029,8 @@ function cmpVer(a, b){
     msg.className = 'updmsg';
     msg.textContent = '';
     try {
-      const r = await fetch(UPD_URL + '?t=' + Date.now(), { cache: 'no-store' });
-      if(!r.ok) throw new Error('HTTP ' + r.status);
-      const j = await r.json();
-      const remote = j['物品产出查询'];
-      if(!remote) throw new Error('version.json 里没有对应条目');
+      const j = await fetchRemoteVersion();
+      const remote = j['物品产出查询'];      if(!remote) throw new Error('version.json 里没有对应条目');
       if(cmpVer(MY_VER, remote) >= 0){
         msg.className = 'updmsg ok';
         msg.textContent = '已是最新版（' + MY_VER + '）';
