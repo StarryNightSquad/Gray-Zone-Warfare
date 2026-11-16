@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GZW 0.5 物品产出查询 · V0.16.3</title>
+<title>GZW 0.5 物品产出查询 · V0.17.0</title>
 <style>
 :root{--bg:#fbfbfa;--fg:#1f2328;--dim:#6b7280;--line:#e5e7eb;--acc:#b45309;--card:#fff;--hi:#fef3c7}
 *{box-sizing:border-box}
@@ -136,7 +136,7 @@ kbd{background:#eee;border-radius:4px;padding:1px 5px;font-size:11px;font-family
     </div>
   </div>
 </div>
-<h1>GZW 0.5 · 物品产出查询<span class="ver">V0.16.3</span></h1>
+<h1>GZW 0.5 · 物品产出查询<span class="ver">V0.17.0</span></h1>
 <div class="sub">数据：0.5.0 资产（manifest 4970906435234985650）· 109 张容器表 + 114 张露天表 · <span id="cnt"></span></div>
 <div class="sub" style="margin-top:-10px">范围：<b>世界战利品</b>（容器 + 露天刷点）+ <b>7 个商人货架</b> + <b>敌人装备</b>。另标「<b>任务需求</b>」——表示某任务<b>需要</b>这把钥匙，但任务本身不提供。整枪配套件标「<b>整枪·</b>」——表示这件配件配在某套武器预设里，可以随整枪一起拿到；<b>只标「整枪」没有其他渠道的，才是买不到也捡不到</b>。不含藏身处产出。<br>
 商人等级：游戏内 1–4 级（UI 存在 1–5 级过滤器，5 级未启用）；<b>每件商品的等级要求不在客户端资产里</b>，只有整商人的解锁任务链可读 —— 见「商人 → 库存」页。<br>
@@ -171,7 +171,7 @@ A3 据点的外围仍按 A2 配 —— 因为六个帮派的掉落表<b>最高�
 </div>
 
 <div class="foot">
-  <div>本工具由「繁星攻略组」提供 · <b>V0.16.3</b> · 数据 2026-11-15</div>
+  <div>本工具由「繁星攻略组」提供 · <b>V0.17.0</b> · 数据 2026-11-15</div>
   <div>反馈与纠错：<a href="https://www.xiaoheihe.cn/app/user/profile/80727291" target="_blank" rel="noopener">小黑盒 · 繁星攻略组</a></div>
   <div class="tip">工具版本见上；数据基线为 0.5.0 客户端资产解析（与工具版本号无关），与游戏内实际表现可能存在差异；以实测为准。</div>
 </div>
@@ -990,10 +990,10 @@ draw();
 
 // ── 检查更新：对比 GitHub 上的 version.json ──────────────────────────
 // 页面本身是纯离线单文件，只有点这个按钮时才联网一次；失败就当没网，不打扰正常使用。
-// 版本号由构建时注入（V0.16.3），与页面其它地方的 VERSION 同源。
+// 版本号由构建时注入（V0.17.0），与页面其它地方的 VERSION 同源。
 // `version.json` 放在仓库**根目录**，两个工具共用（各自只写自己那一项）。
 const UPD_URL = 'https://raw.githubusercontent.com/StarryNightSquad/Gray-Zone-Warfare/main/version.json';
-const MY_VER = 'V0.16.3';
+const MY_VER = 'V0.17.0';
 
 function cmpVer(a, b){
   const pa = String(a).replace(/^v/i, '').split('.').map(x => parseInt(x, 10) || 0);
