@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>《灰区战争》0.5 枪匠模拟器 · 实验版 V1.0.1</title>
+<title>《灰区战争》枪匠模拟器 · V1.0.2</title>
 <style>
 :root{--bg:#fbfbfa;--fg:#1f2328;--dim:#6b7280;--line:#e5e7eb;--card:#fff;--acc:#b45309}
 *{box-sizing:border-box}
@@ -132,7 +132,7 @@ button:hover{background:#fef7ec;border-color:#fcd34d}
       </div>
     </div>
   </div>
-  <h1>《灰区战争》0.5 · 枪匠模拟器<span class="ver">实验版 V1.0.1</span></h1>
+  <h1>《灰区战争》· 枪匠模拟器<span class="ver">V1.0.2</span></h1>
   <div class="sub">数据：《灰区战争》0.5.0 资产（与《物品产出查询》同源）· <b>87 把枪 · 1337 件配件</b> · 数值快照 2026-11-17</div>
   <div class="sub">
     槽位不是写死的：<b>枪身给出的根槽 + 已装配件开出来的新槽</b>，实时长出来。
@@ -412,6 +412,12 @@ const crossMuzzle = (x, y) => {
 function conflictWith(a, skip){
   // 1911 长套筒（6 吋）与**非 6 英寸枪管**互斥（用户 2026-11-18：长套筒只兼容 6 英寸枪管）。
   // 反向不成立 —— 6 英寸枪管可以配短套筒，所以这条要在「装长套筒」时把已有短枪管顶掉。
+  // AUG M-LOK 顶部护木导轨：护木过长包住枪管，配非 20 英寸枪管时**消音器会撞护木**
+  // （用户 2026-11-18）。数据印证：`Handguard_SteyrAugMLOK` 只给 `Barrel.AUG.14/.16`、
+  // 根本不开 20 英寸位 —— 所以它必然是「长护木 + 短枪管」。
+  const _AUGMLOK = 'Handguard_SteyrAugMLOK';
+  if(a === _AUGMLOK){ for(const k in sel){ const b = sel[k]; if(b && /^Suppressor_/i.test(b)) return b; } }
+  else if(/^Suppressor_/i.test(a)){ for(const k in sel){ if(sel[k] === _AUGMLOK) return _AUGMLOK; } }
   const _LONG6 = 'Slide_Colt1911LongSlide6', _B6 = 'Barrel_Colt19116inch_45Acp';
   const _isB = x => /^Barrel_Colt1911/.test(x);
   if(a === _LONG6){ for(const k in sel){ const b = sel[k]; if(b && _isB(b) && b !== _B6) return b; } }
@@ -1015,7 +1021,7 @@ $('#btnImport').addEventListener('click', () => {
 // 失败再退回 raw（无限制，但 CDN 会缓存几分钟 —— 刚发版就点会读到上一版）。
 const UPD_API = 'https://api.github.com/repos/StarryNightSquad/Gray-Zone-Warfare/contents/version.json';
 const UPD_RAW = 'https://raw.githubusercontent.com/StarryNightSquad/Gray-Zone-Warfare/main/version.json';
-const MY_VER = 'V1.0.1';
+const MY_VER = 'V1.0.2';
 
 async function fetchRemoteVersion(){
   try {
@@ -1072,7 +1078,7 @@ function cmpVer(a, b){
 pickGun(DB.guns[0].b);
 </script>
   <div class="foot">
-    <b>实验版 V1.0.1</b> · 配件数据 2026-11-17 · 单文件离线可用，无需联网<br>
+    <b>V1.0.2</b> · 配件数据 2026-11-17 · 单文件离线可用，无需联网<br>
     这是测试版：<b>必需件判定</b>只对已实测的条目负责（枪托 / 导气箍 / 缓冲管 / 后握把 / 套筒 / 护木多数族），
     <b>互斥与同组</b>按 socket 关系推导，<b>修正值</b>按线性相加显示（游戏内是否乘算未验证）。<br>
     已知问题：瞄具的「死接口」（`Rail.Mount.Sight*` / `Rail.Sight` 由瞄具座开出时）会显示为不可用；
