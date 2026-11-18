@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>《灰区战争》0.5 枪匠模拟器 · 实验版 V1.0</title>
+<title>《灰区战争》0.5 枪匠模拟器 · 实验版 V1.0.1</title>
 <style>
 :root{--bg:#fbfbfa;--fg:#1f2328;--dim:#6b7280;--line:#e5e7eb;--card:#fff;--acc:#b45309}
 *{box-sizing:border-box}
@@ -132,7 +132,7 @@ button:hover{background:#fef7ec;border-color:#fcd34d}
       </div>
     </div>
   </div>
-  <h1>《灰区战争》0.5 · 枪匠模拟器<span class="ver">实验版 V1.0</span></h1>
+  <h1>《灰区战争》0.5 · 枪匠模拟器<span class="ver">实验版 V1.0.1</span></h1>
   <div class="sub">数据：《灰区战争》0.5.0 资产（与《物品产出查询》同源）· <b>87 把枪 · 1337 件配件</b> · 数值快照 2026-11-17</div>
   <div class="sub">
     槽位不是写死的：<b>枪身给出的根槽 + 已装配件开出来的新槽</b>，实时长出来。
@@ -410,6 +410,12 @@ const crossMuzzle = (x, y) => {
 };
 
 function conflictWith(a, skip){
+  // 1911 长套筒（6 吋）与**非 6 英寸枪管**互斥（用户 2026-11-18：长套筒只兼容 6 英寸枪管）。
+  // 反向不成立 —— 6 英寸枪管可以配短套筒，所以这条要在「装长套筒」时把已有短枪管顶掉。
+  const _LONG6 = 'Slide_Colt1911LongSlide6', _B6 = 'Barrel_Colt19116inch_45Acp';
+  const _isB = x => /^Barrel_Colt1911/.test(x);
+  if(a === _LONG6){ for(const k in sel){ const b = sel[k]; if(b && _isB(b) && b !== _B6) return b; } }
+  else if(_isB(a) && a !== _B6){ for(const k in sel){ if(sel[k] === _LONG6) return _LONG6; } }
   const act = activeSockets();
   const keyOf = x => Object.keys(sel).find(k => sel[k] === x);
   const ka = keyOf(a);
@@ -550,6 +556,12 @@ function candidates(sock){
       return a && /rail/i.test(a) && (P[a][5]||[]).some(t => lc(t) === key);
     });
     if(byRail) for(const a of mr) if(!list.includes(a)) list.push(a);
+  }
+  // 1911 的**单向长度约束**（用户 2026-11-18）：
+  //   长套筒（6 吋）**只兼容 6 英寸枪管**；反过来 6 英寸枪管可以用于短套筒。
+  if(/^barrel\.1911\./i.test(key)){
+    const _hasLong6 = Object.keys(sel).some(k => sel[k] === 'Slide_Colt1911LongSlide6');
+    if(_hasLong6) list = list.filter(a => a === 'Barrel_Colt19116inch_45Acp');
   }
   // Glock 镜座对套筒有**白名单**（用户 2026-11-18：Viper 基座只兼容 N17 / Z17 / Tyton 三个套筒）。
   // `Mount.Glock.Adapter` 由 17 件改装套筒提供，不能一律放行。
@@ -1003,7 +1015,7 @@ $('#btnImport').addEventListener('click', () => {
 // 失败再退回 raw（无限制，但 CDN 会缓存几分钟 —— 刚发版就点会读到上一版）。
 const UPD_API = 'https://api.github.com/repos/StarryNightSquad/Gray-Zone-Warfare/contents/version.json';
 const UPD_RAW = 'https://raw.githubusercontent.com/StarryNightSquad/Gray-Zone-Warfare/main/version.json';
-const MY_VER = 'V1.0';
+const MY_VER = 'V1.0.1';
 
 async function fetchRemoteVersion(){
   try {
@@ -1060,7 +1072,7 @@ function cmpVer(a, b){
 pickGun(DB.guns[0].b);
 </script>
   <div class="foot">
-    <b>实验版 V1.0</b> · 配件数据 2026-11-17 · 单文件离线可用，无需联网<br>
+    <b>实验版 V1.0.1</b> · 配件数据 2026-11-17 · 单文件离线可用，无需联网<br>
     这是测试版：<b>必需件判定</b>只对已实测的条目负责（枪托 / 导气箍 / 缓冲管 / 后握把 / 套筒 / 护木多数族），
     <b>互斥与同组</b>按 socket 关系推导，<b>修正值</b>按线性相加显示（游戏内是否乘算未验证）。<br>
     已知问题：瞄具的「死接口」（`Rail.Mount.Sight*` / `Rail.Sight` 由瞄具座开出时）会显示为不可用；
